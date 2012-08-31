@@ -16,7 +16,7 @@ do
         chmod +x "$i"
         touch "$i.lock"
         echo "==== Start: `date` ====" >> "${OUTFOLD}/${i}.log"
-		if [ `expr index "$i" "at-"` -eq 1 ]
+		if [ "${f#at-}" != "$f" ]
 		then 
 			at -f "$i" "${i#at-}" >> "${OUTFOLD}/${i}.log.txt"
 		else
