@@ -12,28 +12,46 @@ Dropbox/remote/commands/
 Dropbox/remote/toprint/   
 Dropbox/remote/printed/
 
-Optionally, remote can be named remote_{something} if you want to do this on
-multiple machines so that you may distinguish them.
+Optionally, the directory path can be specified as the initial argument, if a
+folder other than `Dropbox/remote` is desired.
+
+Previous versions allowed you to specify a separate directory in the form of
+`Dropbox/remote_{something}` with `{something}` as the initial argument. I have
+preserved this, however this behavior is deprecated, and may be removed in
+future versions.
 
 Place any executable files (scripts or compiled programs) into the commands
 folder.
 
 Then run the following command to execute scripts on your machine:   
-dropbox_shell.sh   
-or dropbox_shell.sh {something}
+`dropbox_shell.sh`   
+or `dropbox_shell.sh {something}`
 
 All files in the commands folder will be executed. Output will be written to a
 log file in output, and the file will be moved to the old folder. Additionally,
 printable files in toprint will be printed, and moved to the printed folder.
 
+Certain special files (Java .jar, etc.) may be placed in the folder, and they
+will be executed by their respective interpreters/virtual machines.
+
+Currently supported special files are:
+
+* `.class`: run as `java {classname}`
+* `.jar`: run as `java -jar {file}`
+* `.n`: run as `neko {file}`
+
+Other files will be made executable, and executed directly, so be sure to
+include a shebang in scripts.
+
 If no files are found in commands or toprint, the program does nothing.
 
 Ideally, this should be added to a cronjob. My cronjob for this looks like this:   
-*/3 * * * *     bash /path/to/dropbox_shell.sh   
+`*/3 * * * *     bash /path/to/dropbox_shell.sh`   
 This runs it every three minutes.
 
 If a file in the commands folder is named "at-some time string", instead of
 executing it right away, it's assumed to be a bash script to be run using the
 "at" command, and "some time string" is the time to execute it. E.g., creating a
 script in the folder called "at-now + 20 minutes" will cause that file to be run
-twenty minutes from the time dropbox_shell is run.
+twenty minutes from the time dropbox_shell is run. This form should only be used
+for shell scripts.
