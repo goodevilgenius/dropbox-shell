@@ -58,6 +58,14 @@ The file to be executed is passed as the sole argument to the function.
 Feel free to send me your additional functions, and I may add them to the
 program.
 
+In addition to special files, special folders can be defined from which a
+user-defined function will be run on all files within the folder. By default,
+the script supports a `books` folder, and if any file is placed in that folder,
+it will be added to your calibre library. To add your own special folders, first
+create the folder, then add to the folder name to `OTHERFOLDERS` array, then
+create a function called `run_folder_${foldername}` where foldername is the name
+of the folder.
+
 Other files will be made executable, and executed directly, so be sure to
 include a shebang in scripts.
 
