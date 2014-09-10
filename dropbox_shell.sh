@@ -38,9 +38,9 @@ then
 			echo "==== Start: `date` ====" >> "${OUTFOLD}/${i}.log"
 			if [ "${i#at-}" != "$i" ]
 			then 
-				at -f "$i" "${i#at-}" >> "${OUTFOLD}/${i}.log"
+				at -f "$i" "${i#at-}" >> "${OUTFOLD}/${i}.log" 2>&1
 			else
-				"${r[@]}" 2>&1 >> "${OUTFOLD}/${i}.log"
+				"${r[@]}" >> "${OUTFOLD}/${i}.log" 2>&1
 			fi
 			echo "===== End: `date` =====" >> "${OUTFOLD}/${i}.log"
 			echo >> "${OUTFOLD}/${i}.log"
