@@ -9,8 +9,6 @@ Dropbox/remote/
 Dropbox/remote/old/   
 Dropbox/remote/output/   
 Dropbox/remote/commands/   
-Dropbox/remote/toprint/   
-Dropbox/remote/printed/
 
 Optionally, the directory path can be specified as the initial argument, if a
 folder other than `Dropbox/remote` is desired.
@@ -28,8 +26,7 @@ Then run the following command to execute scripts on your machine:
 or `dropbox_shell.sh {path}`
 
 All files in the commands folder will be executed. Output will be written to a
-log file in output, and the file will be moved to the old folder. Additionally,
-printable files in toprint will be printed, and moved to the printed folder.
+log file in output, and the file will be moved to the old folder.
 
 Certain special files (Java .jar, etc.) may be placed in the folder, and they
 will be executed by their respective interpreters/virtual machines.
@@ -60,16 +57,19 @@ program.
 
 In addition to special files, special folders can be defined from which a
 user-defined function will be run on all files within the folder. By default,
-the script supports a `books` folder, and if any file is placed in that folder,
-it will be added to your calibre library. To add your own special folders, first
-create the folder, then add to the folder name to `OTHERFOLDERS` array, then
-create a function called `run_folder_${foldername}` where foldername is the name
-of the folder.
+the script supports a `books` folder, and a `toprint` folder. If any file is
+placed in the `toprint` folder, it will be sent as a print job to the default
+printer. This works for pdf, ps, gif, jpg, bmp, and tif files. If any file is
+placed in the `books` folder, it will be added to your calibre library. To add
+your own special folders, first create the folder, then add to the folder name
+to `OTHERFOLDERS` array, then create a function called
+`run_folder_${foldername}` where foldername is the name of the folder.
 
 Other files will be made executable, and executed directly, so be sure to
 include a shebang in scripts.
 
-If no files are found in commands or toprint, the program does nothing.
+If no files are found in commands or any of the special folders, the program
+does nothing.
 
 Ideally, this should be added to a cronjob. My cronjob for this looks like this:   
 `*/3 * * * *     bash /path/to/dropbox_shell.sh`   

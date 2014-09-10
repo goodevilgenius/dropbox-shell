@@ -10,9 +10,26 @@ PRINTFOLD="${REMOTEFOLD}/toprint"
 PRINTEDFOLD="${REMOTEFOLD}/printed"
 
 ## Processing special folders here. Check README for instructions
-OTHERFOLDERS=( books )
+OTHERFOLDERS=( books toprint )
 function run_folder_books() {
 	calibredb add "$1"
+}
+function run_folder_toprint() {
+	ext="${1##*.}"
+	case $ext in
+		pdf)
+			ps2pdf "$1" - | lp
+			;;
+		ps)
+			lp "$i"
+			;;
+		jpg|gif|png|bmp|tif|tiff)
+			convert "$1" pdf:- | pdf2ps - - | lp
+			;;
+		*)
+			echo "Can't print $ext file"
+			;;
+	esac
 }
 
 ## Add functions to process special types. Check README for instructions
@@ -61,51 +78,6 @@ then
 			echo "===== End: `date` =====" >> "${OUTFOLD}/${i}.log"
 			echo >> "${OUTFOLD}/${i}.log"
 			mv -t "${OLDFOLD}" "$i"
-			rm "$i.lock"
-		fi
-	done
-	popd >/dev/null
-fi
-
-if [ -d "$PRINTFOLD" ]
-then
-	pushd "$PRINTFOLD" >/dev/null
-	for i in *.pdf
-	do
-		if [ -f "$i" -a ! -e "$i.lock" -a "${i%%.lock}" == "$i" ]
-		then
-			touch "$i.lock"
-			echo "=== Printing: `date` ==" >> "${OUTFOLD}/${i}.log"
-			ps2pdf "$i" - | lp >> "${OUTFOLD}/${i}.log" 2>&1
-			echo "= Print done: `date` ==" >> "${OUTFOLD}/${i}.log"
-			echo >> "${OUTFOLD}/${i}.log"
-			mv -t "${PRINTEDFOLD}" "$i"
-			rm "$i.lock"
-		fi
-	done
-	for i in *.ps
-	do
-		if [ -f "$i" -a ! -e "$i.lock" -a "${i%%.lock}" == "$i" ]
-		then
-			touch "$i.lock"
-			echo "=== Printing: `date` ==" >> "${OUTFOLD}/${i}.log"
-			lp "$i" >> "${OUTFOLD}/${i}.log" 2>&1
-			echo "= Print done: `date` ==" >> "${OUTFOLD}/${i}.log"
-			echo >> "${OUTFOLD}/${i}.log"
-			mv -t "${PRINTEDFOLD}" "$i"
-			rm "$i.lock"
-		fi
-	done
-	for i in *.jpg *.gif *.png *.bmp *.tif *.tiff
-	do
-		if [ -f "$i" -a ! -e "$i.lock" -a "${i%%.lock}" == "$i" ]
-		then
-			touch "$i.lock"
-			echo "=== Printing: `date` ==" >> "${OUTFOLD}/${i}.log"
-			convert "$i" pdf:- | pdf2ps - - | lp >> "${OUTFOLD}/${i}.log" 2>&1
-			echo "= Print done: `date` ==" >> "${OUTFOLD}/${i}.log"
-			echo >> "${OUTFOLD}/${i}.log"
-			mv -t "${PRINTEDFOLD}" "$i"
 			rm "$i.lock"
 		fi
 	done
