@@ -9,6 +9,23 @@ OLDFOLD="${REMOTEFOLD}/old"
 PRINTFOLD="${REMOTEFOLD}/toprint"
 PRINTEDFOLD="${REMOTEFOLD}/printed"
 
+## Add functions to process special types, check README for instructions
+function run_application_octetstream_n() {
+	neko "$1"
+}
+function run_application_xjavaapplet_class() {
+	java "${1%.class}"
+}
+function run_application_jar_jar() {
+	java -jar "$1"
+}
+
+## Default run function. Do not modify
+function run_default() {
+	chmod +x "$1"
+	"./${1}"
+}
+
 if [ -d "$COMFOLD" ]
 then
 	pushd "$COMFOLD" >/dev/null
@@ -18,29 +35,22 @@ then
 		then
 			mime="$(file -bi "$i")"
 			mime="${mime%;*}"
+			minmime=$(echo "$mime" | sed -e 's@/@_@g' -e 's/[^a-z_]//')
 			ext="${i##*.}"
 
-			touch "$i.lock"
-			if [ "$mime" = "application/octet-stream" -a "$ext" = "n" ]
-			then
-				r=( neko "$i" )
-			elif [ "$mime" = "application/x-java-applet" -a "$ext" = "class" ]
-			then
-				r=( java "${i%.class}" )
-			elif [ "$mime" = "application/jar" -a "$ext" = "jar" ]
-			then
-				r=( java -jar "$i" )
-			else
-				chmod +x "$i"
-				r=( "./${i}" )
+			if declare -f "run_${minmime}_${ext}" >/dev/null
+			then dorun="run_${minmime}_${ext}"
+			else dorun="run_default"
 			fi 
+
+			touch "$i.lock"
 
 			echo "==== Start: `date` ====" >> "${OUTFOLD}/${i}.log"
 			if [ "${i#at-}" != "$i" ]
 			then 
 				at -f "$i" "${i#at-}" >> "${OUTFOLD}/${i}.log" 2>&1
 			else
-				"${r[@]}" >> "${OUTFOLD}/${i}.log" 2>&1
+				$dorun "$i" >> "${OUTFOLD}/${i}.log" 2>&1
 			fi
 			echo "===== End: `date` =====" >> "${OUTFOLD}/${i}.log"
 			echo >> "${OUTFOLD}/${i}.log"

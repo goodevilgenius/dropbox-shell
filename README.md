@@ -25,7 +25,7 @@ folder.
 
 Then run the following command to execute scripts on your machine:   
 `dropbox_shell.sh`   
-or `dropbox_shell.sh {something}`
+or `dropbox_shell.sh {path}`
 
 All files in the commands folder will be executed. Output will be written to a
 log file in output, and the file will be moved to the old folder. Additionally,
@@ -39,6 +39,24 @@ Currently supported special files are:
 * `.class`: run as `java {classname}`
 * `.jar`: run as `java -jar {file}`
 * `.n`: run as `neko {file}`
+
+Additional special files can be supported by adding BASH functions to the
+script. The functions should be named like `run_${mimetype}_${extension}` where
+mimetype is the mime-type of the file (as determined by `file -bi $file`), with
+`/` being replaced with `_`, and all other non-alphabetic characters being
+removed. So, if the mime-type is `application/octet-stream`, and the file
+extension is `.foobar`, then the function definition would look something like
+this:
+
+    function run_application_octetstream_foobar()
+	{
+	    run_foobar "$1"
+    }
+
+The file to be executed is passed as the sole argument to the function.
+
+Feel free to send me your additional functions, and I may add them to the
+program.
 
 Other files will be made executable, and executed directly, so be sure to
 include a shebang in scripts.
