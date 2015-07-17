@@ -51,7 +51,7 @@ function run_default() {
 
 # If `file` command isn't present (msys), declare a dummy function
 # In this case, all commands will use the default run function
-if ! which file
+if ! which file >/dev/null
 then
 	function file() {
 		echo "unknown/unknown"
