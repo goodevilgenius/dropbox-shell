@@ -55,6 +55,9 @@ The file to be executed is passed as the sole argument to the function.
 Feel free to send me your additional functions, and I may add them to the
 program.
 
+If `file` is not available on the system, all files will be executed normally,
+so be sure to not use any special files on such a system.
+
 In addition to special files, special folders can be defined from which a
 user-defined function will be run on all files within the folder. By default,
 the script supports a `books` folder, and a `toprint` folder. If any file is

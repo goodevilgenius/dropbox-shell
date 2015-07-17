@@ -49,6 +49,15 @@ function run_default() {
 	"./${1}"
 }
 
+# If `file` command isn't present (msys), declare a dummy function
+# In this case, all commands will use the default run function
+if ! which file
+then
+	function file() {
+		echo "unknown/unknown"
+	}
+fi 
+
 if [ -d "$COMFOLD" ]
 then
 	pushd "$COMFOLD" >/dev/null
@@ -77,7 +86,7 @@ then
 			fi
 			echo "===== End: `date` =====" >> "${OUTFOLD}/${i}.log"
 			echo >> "${OUTFOLD}/${i}.log"
-			mv -t "${OLDFOLD}" "$i"
+			mv --target-directory="${OLDFOLD}" "$i"
 			rm "$i.lock"
 		fi
 	done
@@ -99,7 +108,7 @@ do
 				run_folder_${d} "$i" >> "${OUTFOLD}/${d}.log" 2>&1
 				echo "==== Processed from $d: `date` ==" >> "${OUTFOLD}/${d}.log"
 				echo >> "${OUTFOLD}/${d}.log"
-				mv -t "${OLDFOLD}" "$i"
+				mv --target-directory="${OLDFOLD}" "$i"
 				rm "$i.lock"
 			fi
 		done
